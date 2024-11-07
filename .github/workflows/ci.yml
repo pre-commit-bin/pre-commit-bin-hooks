@@ -91,7 +91,7 @@ jobs:
           merge-multiple: true
       - shell: bash
         run: |
-          ls -la
+          ls -la dist
       - name: Publish
         run: |
           cargo login ${{ secrets.CRATES_TOKEN }}
