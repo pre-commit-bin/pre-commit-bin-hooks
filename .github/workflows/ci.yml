@@ -28,19 +28,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: taiki-e/upload-rust-binary-action@v1
-        id: binary
+        id: build
         with:
           bin: trailing-whitespace
           token: ${{ secrets.GITHUB_TOKEN }}
           dry-run: true
-      - shell: bash
-        run: |
-          ls -la
-          echo "ARCHIVE: ${{ steps.binary.outputs.archive }}"
       - uses: actions/upload-artifact@v4
         with:
           name: dist-${{ matrix.target }}
-          path: ${{ steps.binary.outputs.archive }}.*
+          path: ${{ steps.build.outputs.archive }}.*
 
   unit-tests:
     name: Unit tests
@@ -83,15 +79,6 @@ jobs:
         with:
           rust-version: stable
           profile: minimal
-      - name: Donwload artifact
-        uses: actions/download-artifact@v4
-        with:
-          path: dist
-          pattern: dist-*
-          merge-multiple: true
-      - shell: bash
-        run: |
-          ls -la dist
       - name: Publish
         run: |
           cargo login ${{ secrets.CRATES_TOKEN }}
@@ -128,11 +115,12 @@ jobs:
         run: |
           TAG_TITLE=${GITHUB_REF#refs/*/}
           echo "title=$TAG_TITLE" >> $GITHUB_OUTPUT
-      - name: Download distribution
+      - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: dist
-          path: ./dist
+          path: dist
+          pattern: dist-*
+          merge-multiple: true
       - name: Create release
         uses: softprops/action-gh-release@v2
         env:
