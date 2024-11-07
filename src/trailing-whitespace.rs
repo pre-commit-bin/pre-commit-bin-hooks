@@ -6,17 +6,12 @@ use std::process::exit;
 ///
 /// This is not needed for the actual implementation because replacements are
 /// done secuentially, but it is used in the tests to generate unique
-#[cfg(test)]
 fn get_id() -> usize {
     use std::sync::atomic::{AtomicUsize, Ordering};
     static COUNTER: AtomicUsize = AtomicUsize::new(1);
     COUNTER.fetch_add(1, Ordering::Relaxed)
 }
 
-#[cfg(not(test))]
-fn get_id() -> usize {
-    0
-}
 
 fn fix_file(path: &str) -> Result<(), Vec<String>> {
     let maybe_file = OpenOptions::new().read(true).open(path);
@@ -79,9 +74,6 @@ fn fix_file(path: &str) -> Result<(), Vec<String>> {
         temp_file.write_all(buffer.as_bytes()).unwrap();
         buffer.clear();
     }
-
-    // close the file
-    std::mem::drop(temp_file_path);
 
     if edited {
         std::fs::rename(&temp_file_path, &path).unwrap();
