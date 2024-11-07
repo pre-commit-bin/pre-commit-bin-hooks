@@ -33,7 +33,7 @@ jobs:
           bin: trailing-whitespace
           token: ${{ secrets.GITHUB_TOKEN }}
           dry-run: true
-          bin-leading-dir: dist
+          leading-dir: dist
       - run: |
           ls -la
           echo "DIST:"
