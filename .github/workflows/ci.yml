@@ -66,28 +66,12 @@ jobs:
       - name: Run unit tests
         run: cargo test
 
-  test-release:
-    needs:
-      - unit-tests
-      - build
-    name: Test release
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Rust
-        uses: hecrj/setup-rust-action@v2
-        with:
-          rust-version: stable
-          profile: minimal
-      - name: Publish
-        run: |
-          cargo login ${{ secrets.CRATES_TOKEN }}
-          cargo publish -v --dry-run
-
   release:
     if: startsWith(github.ref, 'refs/tags/')
     name: Release
-    needs: test-release
+    needs:
+      - build
+      - unit-tests
     permissions:
       contents: write
     runs-on: ubuntu-latest
