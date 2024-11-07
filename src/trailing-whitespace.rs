@@ -18,7 +18,6 @@ fn get_id() -> usize {
     0
 }
 
-
 fn fix_file(path: &str) -> Result<(), Vec<String>> {
     let maybe_file = OpenOptions::new().read(true).open(path);
     if maybe_file.is_err() {
