@@ -6,10 +6,16 @@ use std::process::exit;
 ///
 /// This is not needed for the actual implementation because replacements are
 /// done secuentially, but it is used in the tests to generate unique
+#[cfg(test)]
 fn get_id() -> usize {
     use std::sync::atomic::{AtomicUsize, Ordering};
     static COUNTER: AtomicUsize = AtomicUsize::new(1);
     COUNTER.fetch_add(1, Ordering::Relaxed)
+}
+
+#[cfg(not(test))]
+fn get_id() -> usize {
+    0
 }
 
 
