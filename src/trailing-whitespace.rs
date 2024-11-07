@@ -76,6 +76,7 @@ fn fix_file(path: &str) -> Result<(), Vec<String>> {
     }
 
     if edited {
+        std::fs::remove_file(&path).unwrap();
         std::fs::rename(&temp_file_path, &path).unwrap();
     }
 
