@@ -80,6 +80,9 @@ fn fix_file(path: &str) -> Result<(), Vec<String>> {
         buffer.clear();
     }
 
+    // close the file
+    std::mem::drop(temp_file);
+
     if edited {
         std::fs::rename(&temp_file_path, &path).unwrap();
     }
