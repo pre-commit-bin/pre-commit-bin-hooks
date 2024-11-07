@@ -28,11 +28,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: taiki-e/upload-rust-binary-action@v1
+        id: binary
         with:
           bin: trailing-whitespace
           token: ${{ secrets.GITHUB_TOKEN }}
           dry-run: true
-      - run: ls -la
+      - run: |
+          ls -la
+          echo "ARCHIVE: ${{ steps.binary.outputs.archive }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.target }}
+          path: ${{ steps.binary.outputs.archive }}
 
   unit-tests:
     name: Unit tests
