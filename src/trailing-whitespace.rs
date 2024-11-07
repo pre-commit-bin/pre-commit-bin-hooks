@@ -81,7 +81,7 @@ fn fix_file(path: &str) -> Result<(), Vec<String>> {
     }
 
     // close the file
-    std::mem::drop(temp_file);
+    std::mem::drop(temp_file_path);
 
     if edited {
         std::fs::rename(&temp_file_path, &path).unwrap();
