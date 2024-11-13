@@ -7,7 +7,7 @@ Sample hooks for [pre-commit-bin].
 ```toml
 # .pre-commit-bin.toml
 [trailing-whitespace]
-repo = "https://github.com/pre-commit-bin/pre-commit-bin-hooks@v0.1.0"
+at = "https://github.com/pre-commit-bin/pre-commit-bin-hooks@v0.1.0"
 ```
 
 ## Hooks
