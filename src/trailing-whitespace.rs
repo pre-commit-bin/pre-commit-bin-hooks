@@ -5,7 +5,7 @@ use std::process::exit;
 /// Unique identifier generator.
 ///
 /// This is not needed for the actual implementation because replacements are
-/// done secuentially, but it is used in the tests to generate unique
+/// done secuentially, but it is used in the tests to generate unique files.
 #[cfg(test)]
 fn get_id() -> usize {
     use std::sync::atomic::{AtomicUsize, Ordering};
