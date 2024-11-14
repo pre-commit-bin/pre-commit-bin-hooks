@@ -3,6 +3,7 @@ fn hook_tests() {
     trycmd::TestCases::new().case("src/*/*.toml");
 }
 
+#[cfg(not(windows))]
 #[test]
 fn readme_config_examples_version_updated() {
     let readme_content = std::fs::read_to_string("README.md").unwrap();
