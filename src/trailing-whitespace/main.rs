@@ -18,7 +18,7 @@ fn get_id() -> usize {
     0
 }
 
-fn fix_file(path: &str) -> Result<(), Vec<String>> {
+fn fix_file(path: &str) -> Result<Vec<usize>, Vec<String>> {
     let maybe_file = OpenOptions::new().read(true).open(path);
     if maybe_file.is_err() {
         return Err(Vec::from([format!(
@@ -47,9 +47,11 @@ fn fix_file(path: &str) -> Result<(), Vec<String>> {
     let mut temp_file = maybe_temp_file.unwrap();
 
     let mut buffer = String::new();
-    let mut edited = false;
+    let mut linenom = 0;
+    let mut edition_line_numbers = Vec::new();
 
     loop {
+        linenom += 1;
         let bytes_read_result = file.read_line(&mut buffer);
         if bytes_read_result.is_err() {
             return Err(Vec::from([bytes_read_result.unwrap_err().to_string()]));
@@ -70,9 +72,13 @@ fn fix_file(path: &str) -> Result<(), Vec<String>> {
             ""
         };
 
+        let mut edited = false;
         while buffer.ends_with(' ') || buffer.ends_with('\t') {
             edited = true;
             buffer.pop();
+        }
+        if edited {
+            edition_line_numbers.push(linenom);
         }
 
         buffer.push_str(eof);
@@ -80,12 +86,14 @@ fn fix_file(path: &str) -> Result<(), Vec<String>> {
         buffer.clear();
     }
 
-    if edited {
+    if edition_line_numbers.is_empty() {
+        std::fs::remove_file(&temp_file_path).unwrap();
+        Ok(edition_line_numbers)
+    } else {
         std::fs::remove_file(&path).unwrap();
         std::fs::rename(&temp_file_path, &path).unwrap();
+        Ok(edition_line_numbers)
     }
-
-    Ok(())
 }
 
 fn main() {
@@ -96,9 +104,26 @@ fn main() {
     }
 
     let mut errors: Vec<String> = Vec::new();
+    let mut exitcode = 0;
     for file_path in args.skip(1) {
-        if let Err(errs) = fix_file(&file_path) {
-            errors.extend(errs);
+        match fix_file(&file_path) {
+            Ok(edition_line_numbers) => {
+                if !edition_line_numbers.is_empty() {
+                    eprintln!(
+                        "Fixed trailing whitespaces in {} at lines: {}",
+                        file_path,
+                        edition_line_numbers
+                            .iter()
+                            .map(|n| n.to_string())
+                            .collect::<Vec<String>>()
+                            .join(", ")
+                    );
+                    exitcode = 1;
+                }
+            }
+            Err(errs) => {
+                errors.extend(errs);
+            }
         }
     }
 
@@ -106,8 +131,10 @@ fn main() {
         for err in errors {
             eprintln!("{}", err);
         }
-        exit(1);
+        exit(2);
     }
+
+    exit(exitcode);
 }
 
 #[cfg(test)]

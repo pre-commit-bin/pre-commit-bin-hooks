@@ -1,0 +1,3 @@
+bin.name = "trailing-whitespace"
+args = ["text-file.txt"]
+status = "failed"
