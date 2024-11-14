@@ -98,7 +98,7 @@ jobs:
           name: ${{ steps.tag.outputs.title }}
           tag_name: ${{ steps.tag.outputs.title }}
           body: |
-            See [CHANGELOG](https://github.com/mondeja/hledger-fmt/blob/master/CHANGELOG.md).
+            See [CHANGELOG](https://github.com/pre-commit-bin/pre-commit-bin-hooks/blob/main/CHANGELOG.md).
           draft: false
           prerelease: false
           files: ./dist/*
