@@ -47,11 +47,11 @@ fn fix_file(path: &str) -> Result<Vec<usize>, Vec<String>> {
     let mut temp_file = maybe_temp_file.unwrap();
 
     let mut buffer = String::new();
-    let mut linenom = 0;
+    let mut lineno = 0;
     let mut edition_line_numbers = Vec::new();
 
     loop {
-        linenom += 1;
+        lineno += 1;
         let bytes_read_result = file.read_line(&mut buffer);
         if bytes_read_result.is_err() {
             return Err(Vec::from([bytes_read_result.unwrap_err().to_string()]));
@@ -78,7 +78,7 @@ fn fix_file(path: &str) -> Result<Vec<usize>, Vec<String>> {
             buffer.pop();
         }
         if edited {
-            edition_line_numbers.push(linenom);
+            edition_line_numbers.push(lineno);
         }
 
         buffer.push_str(eof);
